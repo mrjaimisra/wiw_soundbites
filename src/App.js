@@ -42,7 +42,7 @@ function App() {
   //     setBites(snapshot.val());
   //   });
   //   console.timeEnd("OnValue")
-  // }, [db]);
+  // }, []);
 
   const handleSearch = (event) => {
     event.preventDefault();
