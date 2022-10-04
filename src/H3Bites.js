@@ -1,4 +1,4 @@
-import { h3SoundBites } from './H3.js';
+// import { h3SoundBites } from './H3.js';
 import Bite from './Bite.js';
 
 const H3Bites = props => {
@@ -63,7 +63,7 @@ const H3Bites = props => {
     );
   }
 
-  return h3SoundBites().groupBySpeakerFilterAndSort().map(([groupName, bitesData]) => {
+  return props.bites.groupBySpeakerFilterAndSort().map(([groupName, bitesData]) => {
       return(
         <div
           key={groupName}
