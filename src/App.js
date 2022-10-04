@@ -1,21 +1,22 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { fireBaseApp } from './firebase';
-import { database } from './firebase';
+// import { database } from './firebase';
 // import logo from './logo.svg';
 import './App.css';
 import H3Bites from './H3Bites.js';
 import Bite from './Bite.js';
-import { importH3SoundBites } from './H3Importer.js';
-import { getDatabase, ref, onValue, child, get} from "firebase/database";
+// import { importH3SoundBites } from './H3Importer.js';
+import { getDatabase, ref, child, get} from "firebase/database";
+// import { onValue } from "firebase/database";
 
-const db = getDatabase();
+// const db = getDatabase();
 const dbRef = ref(getDatabase());
 
 function App() {
   const [search, setSearch] = useState("");
   const [bites, setBites] = useState([]);
-  const bitesRef = ref(db, 'bites');
+  // const bitesRef = ref(db, 'bites');
 
   useEffect(() => {
     console.time("Get");
@@ -31,7 +32,7 @@ function App() {
       console.error(error);
     });
     console.timeEnd("Get")
-  }, [dbRef]);
+  }, []);
 
   // the get() approach above seems to be faster according to console.time
   // useEffect(() => {

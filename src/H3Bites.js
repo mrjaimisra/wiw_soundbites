@@ -51,6 +51,7 @@ const H3Bites = props => {
           matchData[lastFoundIndex] = segment.replace(term, "");
           return true;
         }
+        return false;
       });
     });
   }
@@ -94,7 +95,7 @@ export default H3Bites;
 
 const BitesHeader = props => {
   const heading = <h2 style={{width: 'fit-content'}}>{props.groupName}</h2>;
-  const image = <img src={props.imgSrc} style={{width: '10vw', height: 'auto'}}/>;
+  const image = <img src={props.imgSrc} style={{width: '10vw', height: 'auto'}} alt={props.groupName}/>;
 
   return(
     <div
