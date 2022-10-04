@@ -2,6 +2,8 @@ import { h3SoundBites } from './H3.js';
 import Bite from './Bite.js';
 
 const H3Bites = props => {
+  const searchTerms = props.search.toLowerCase().split(" ").filter(a => a.length > 0);
+
   function groupBy(objects, attribute) {
     return objects.reduce(function(group, object) {
       (group[object[attribute]] = group[object[attribute]] || []).push(object);
@@ -19,49 +21,49 @@ const H3Bites = props => {
     return 0;
   }
 
-  return Object.entries(groupBy(h3SoundBites(), "speaker"))
-    .sort((a, b) => compareAttributes(a, b, 0))
-    .map(([groupName, bitesData]) => {
-      const heading = <h2 style={{width: 'fit-content'}}>{groupName}</h2>;
-      const image = <img src={bitesData[0].imgSrc} style={{width: '10vw', height: 'auto'}}/>;
+  function dataToSearch(data) {
+    return [data.speaker.toLowerCase()].concat(
+      data.name.split(" ").map(d => d.toLowerCase())
+    );
+  }
 
-      const header = (
-        <div
-          style={{
-            alignItems: "flex-start",
-            display: "flex",
-            flexDirection: "row-reverse",
-            justifyContent: "flex-end",
-          }}
-        >
-          {heading}
-          {image}
-        </div>
-      );
+  function speakerNameMatchesSearchTerms(name) {
+    let nameMatches = searchTerms.every(st => name.toLowerCase().includes(st));
+    if (nameMatches) return true;
 
-      const bites = bitesData.sort((a, b) => compareAttributes(a, b, "name")).map((bite, i) => {
-        return (
-          <Bite
-            key={i}
-            name={bite.name}
-            src={bite.src}
-            speaker={bite.speaker}
-          />
-        );
+    return false;
+  }
+
+  function foundMatch(matchData) {
+    if (speakerNameMatchesSearchTerms(matchData[0])) return true;
+    return biteNameMatchesSearchTerms(matchData);
+  };
+
+  function biteNameMatchesSearchTerms(matchData) {
+    var lastFoundIndex;
+
+    return searchTerms.every((term) => {
+      return matchData.some((segment) => {
+        if (segment.includes(term)) {
+          if (lastFoundIndex && matchData.slice(lastFoundIndex).indexOf(segment) === -1) return false;
+
+          lastFoundIndex = matchData.indexOf(segment);
+          matchData[lastFoundIndex] = segment.replace(term, "");
+          return true;
+        }
       });
+    });
+  }
 
-      const bitesSection = (
-        <section
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            marginLeft: "2vw",
-          }}
-        >
-          {bites}
-        </section>
-      )
+  Array.prototype.groupBySpeakerFilterAndSort = function() {
+    return(
+      Object.entries(groupBy(this, "speaker"))
+      .filter(([name, data]) => data.some(d => foundMatch(dataToSearch(d))))
+      .sort((a, b) => compareAttributes(a, b, 0))
+    );
+  }
 
+  return h3SoundBites().groupBySpeakerFilterAndSort().map(([groupName, bitesData]) => {
       return(
         <div
           key={groupName}
@@ -72,11 +74,68 @@ const H3Bites = props => {
             padding: "0.5vw"
           }}
         >
-          {header}
-          {bitesSection}
+          <BitesHeader
+            imgSrc={bitesData[0].imgSrc}
+            groupName={groupName}
+          />
+
+          <BitesSection
+            bitesData={bitesData}
+            dataToSearch={dataToSearch}
+            foundMatch={foundMatch}
+            compareAttributes={compareAttributes}
+          />
         </div>
       )
     });
 }
 
 export default H3Bites;
+
+const BitesHeader = props => {
+  const heading = <h2 style={{width: 'fit-content'}}>{props.groupName}</h2>;
+  const image = <img src={props.imgSrc} style={{width: '10vw', height: 'auto'}}/>;
+
+  return(
+    <div
+      style={{
+        alignItems: "flex-start",
+        display: "flex",
+        flexDirection: "row-reverse",
+        justifyContent: "flex-end",
+      }}
+    >
+      {heading}
+      {image}
+    </div>
+  )
+}
+
+const BitesSection = props => {
+  function renderBitesInSection() {
+    return props.bitesData.filter((data) => props.foundMatch(props.dataToSearch(data)))
+      .sort((a, b) => props.compareAttributes(a, b, "name"))
+      .map((bite, i) => {
+        return (
+        <Bite
+          key={i}
+          name={bite.name}
+          src={bite.src}
+          speaker={bite.speaker}
+        />
+      );
+    });
+  }
+
+  return(
+    <section
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        marginLeft: "2vw",
+      }}
+    >
+      {renderBitesInSection()}
+    </section>
+  )
+}
