@@ -1,4 +1,4 @@
-import { h3SoundBites } from './H3.js';
+// import { h3SoundBites } from './H3.js';
 import Bite from './Bite.js';
 
 const H3Bites = props => {
@@ -51,6 +51,7 @@ const H3Bites = props => {
           matchData[lastFoundIndex] = segment.replace(term, "");
           return true;
         }
+        return false;
       });
     });
   }
@@ -63,7 +64,7 @@ const H3Bites = props => {
     );
   }
 
-  return h3SoundBites().groupBySpeakerFilterAndSort().map(([groupName, bitesData]) => {
+  return props.bites.groupBySpeakerFilterAndSort().map(([groupName, bitesData]) => {
       return(
         <div
           key={groupName}
@@ -94,7 +95,7 @@ export default H3Bites;
 
 const BitesHeader = props => {
   const heading = <h2 style={{width: 'fit-content'}}>{props.groupName}</h2>;
-  const image = <img src={props.imgSrc} style={{width: '10vw', height: 'auto'}}/>;
+  const image = <img src={props.imgSrc} style={{width: '10vw', height: 'auto'}} alt={props.groupName}/>;
 
   return(
     <div
