@@ -13,6 +13,32 @@ import { getDatabase, ref, child, get} from "firebase/database";
 // const db = getDatabase();
 const dbRef = ref(getDatabase());
 
+const socket = new WebSocket('ws://localhost:3030');
+socket.addEventListener('open', function (event) {
+  socket.send('Hello Server!');
+});
+
+function stopAllAudio() {
+  document.querySelectorAll("audio").forEach((audio) => audio.pause());
+}
+
+socket.addEventListener('message', function (event) {
+  console.log('Message from server', event.data);
+  if (event.data === "Hello Server!" ) return;
+
+  const audioElement = document.getElementById(event.data).children[0];
+  stopAllAudio();
+  // audioElement.pause();
+  audioElement.currentTime = 0;
+  audioElement.play();
+});
+
+socket.addEventListener('close', function (event) {
+  console.log('The connection has been closed');
+});
+
+window.socket = socket;
+
 function App() {
   const [search, setSearch] = useState("");
   const [bites, setBites] = useState([]);

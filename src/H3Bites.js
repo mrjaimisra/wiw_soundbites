@@ -120,6 +120,7 @@ const BitesSection = props => {
         return (
         <Bite
           key={i}
+          id={'bite-' + i}
           name={bite.name}
           src={bite.src}
           speaker={bite.speaker}

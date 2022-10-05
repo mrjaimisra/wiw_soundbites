@@ -1,23 +1,13 @@
 const Bite = props => {
   function play(event) {
-    stopAllAudio();
-
-    const audioElement = event.target.children[0];
-
-    // audioElement.pause();
-    audioElement.currentTime = 0;
-
     event.preventDefault();
-    event.target.children[0].play();
-  }
-
-  function stopAllAudio() {
-    document.querySelectorAll("audio").forEach((audio) => audio.pause());
+    window.socket.send(event.target.id);
   }
 
   return(
     <>
       <button
+        id={props.id}
         onClick={(event) => play(event)}
         style={{
           backgroundColor: "#3098A5",
