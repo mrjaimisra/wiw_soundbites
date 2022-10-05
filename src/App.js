@@ -26,8 +26,8 @@ socket.addEventListener('message', function (event) {
   console.log('Message from server', event.data);
   if (event.data === "Hello Server!" ) return;
 
-  const audioElement = document.getElementById(event.data).children[0];
   stopAllAudio();
+  const audioElement = document.getElementById(event.data).children[0];
   // audioElement.pause();
   audioElement.currentTime = 0;
   audioElement.play();
@@ -86,8 +86,8 @@ function App() {
 
       <h1>Who Invited Will Sound Board</h1>
       <Search search={search} handleSearch={handleSearch} />
-      <Bite speaker="000" name="Boing!" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"/>
-      <Bite speaker="000" name="Airhorn" src="https://cdn.staticcrate.com/stock-hd/audio/soundscrate-air-horn-designer-3.mp3"/>
+      <Bite id="boing" speaker="000" name="Boing!" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"/>
+      <Bite id="airhorn" speaker="000" name="Airhorn" src="https://cdn.staticcrate.com/stock-hd/audio/soundscrate-air-horn-designer-3.mp3"/>
       <H3Bites search={search} bites={bites} />
     </div>
   );
