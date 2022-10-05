@@ -27,7 +27,9 @@ socket.addEventListener('message', function (event) {
   if (event.data === "Hello Server!" ) return;
 
   stopAllAudio();
-  const audioElement = document.getElementById(event.data).children[0];
+  const audioElement = document.getElementById(event.data)?.children[0];
+  if (!audioElement) return;
+
   // audioElement.pause();
   audioElement.currentTime = 0;
   audioElement.play();
