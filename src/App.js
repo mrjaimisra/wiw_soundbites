@@ -13,6 +13,41 @@ import { getDatabase, ref, child, get} from "firebase/database";
 // const db = getDatabase();
 const dbRef = ref(getDatabase());
 
+// var HOST = window.location.origin.replace(/^http/, 'ws').split("3000")[0] + '3030'
+
+var HOST = "wss://d948-174-63-112-66.ngrok.io/" + '3030'
+
+const socket = new WebSocket(HOST)
+socket.addEventListener('open', function (event) {
+  socket.send('Hello Server!');
+});
+
+function stopAllAudio() {
+  document.querySelectorAll("audio").forEach((audio) => audio.pause());
+}
+
+socket.addEventListener('message', function (event) {
+  console.log(process.env.REACT_APP_LISTENER);
+  if (process.env.REACT_APP_LISTENER !== "true") return;
+
+  console.log('Message from server', event.data);
+  if (event.data === "Hello Server!" ) return;
+
+  stopAllAudio();
+  const audioElement = document.getElementById(event.data)?.children[0];
+  if (!audioElement) return;
+
+  // audioElement.pause();
+  audioElement.currentTime = 0;
+  audioElement.play();
+});
+
+socket.addEventListener('close', function (event) {
+  console.log('The connection has been closed');
+});
+
+window.socket = socket;
+
 function App() {
   const [search, setSearch] = useState("");
   const [bites, setBites] = useState([]);
@@ -60,8 +95,8 @@ function App() {
 
       <h1>Who Invited Will Sound Board</h1>
       <Search search={search} handleSearch={handleSearch} />
-      <Bite speaker="000" name="Boing!" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"/>
-      <Bite speaker="000" name="Airhorn" src="https://cdn.staticcrate.com/stock-hd/audio/soundscrate-air-horn-designer-3.mp3"/>
+      <Bite id="boing" speaker="000" name="Boing!" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"/>
+      <Bite id="airhorn" speaker="000" name="Airhorn" src="https://cdn.staticcrate.com/stock-hd/audio/soundscrate-air-horn-designer-3.mp3"/>
       <H3Bites search={search} bites={bites} />
     </div>
   );
