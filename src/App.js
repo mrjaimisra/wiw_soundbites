@@ -13,7 +13,11 @@ import { getDatabase, ref, child, get} from "firebase/database";
 // const db = getDatabase();
 const dbRef = ref(getDatabase());
 
-const socket = new WebSocket('ws://localhost:3030');
+// var HOST = window.location.origin.replace(/^http/, 'ws').split("3000")[0] + '3030'
+
+var HOST = "wss://d948-174-63-112-66.ngrok.io/" + '3030'
+
+const socket = new WebSocket(HOST)
 socket.addEventListener('open', function (event) {
   socket.send('Hello Server!');
 });
@@ -23,6 +27,9 @@ function stopAllAudio() {
 }
 
 socket.addEventListener('message', function (event) {
+  console.log(process.env.REACT_APP_LISTENER);
+  if (process.env.REACT_APP_LISTENER !== "true") return;
+
   console.log('Message from server', event.data);
   if (event.data === "Hello Server!" ) return;
 
